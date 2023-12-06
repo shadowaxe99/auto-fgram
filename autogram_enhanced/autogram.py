@@ -8,6 +8,11 @@ import json
 
 
 def main():
+    # Initialize new modules
+    account_manager = AccountManager()
+    customization_manager = CustomizationManager()
+    engagement_enhancer = EngagementEnhancer()
+    
     top_posts = redditAPI()
     for post in top_posts:
         if post.url.endswith('.jpg') or post.url.endswith('.png'):
@@ -15,8 +20,10 @@ def main():
             isDownloaded, image_path = download_image(post.url, extension)
             if isDownloaded:
                 repo_url = 'https://raw.githubusercontent.com/abdulsamad4576/autogram'
-                access_token = os.environ.get('INSTA_ACCESS_TOKEN') 
-                ig_user_id = os.environ.get('INSTA_USERNAME')
+                # Switch to the next available account using account_manager
+                next_account_info = account_manager.get_next_account()
+                access_token = next_account_info['access_token']
+                ig_user_id = next_account_info['ig_user_id']
                 image_filename = image_path.split('/')[-1]
                 post_response = post_to_instagram(repo_url, image_filename, access_token, ig_user_id)
                 print(post_response)
@@ -26,9 +33,17 @@ def post_to_instagram(repo_url, image_filename, access_token, ig_user_id):
     image_url = f'{repo_url}/main/images/{image_filename}'
 
     post_url = f'https://graph.facebook.com/v10.0/{ig_user_id}/media'
+    # Customize the post caption using the customization_manager
+    customized_caption = customization_manager.customize_caption(str(date.today()))
+
+    # Generate engagement prompts using the engagement_enhancer
+    call_to_action = engagement_enhancer.generate_call_to_action()
+    engagement_prompt = engagement_enhancer.prompt_user_interaction()
+
+    # Create payload for the post with updated caption and engagement prompts
     payload = {
         'image_url': image_url,
-        'caption': str(date.today()), 
+        'caption': f"{customized_caption} {call_to_action} {engagement_prompt}",
         'access_token': access_token
     }
     response = requests.post(post_url, data=payload)
