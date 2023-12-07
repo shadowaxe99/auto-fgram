@@ -10,6 +10,7 @@ const CrossPromoter = require('./crossPromoter');
 const ComplianceManager = require('./complianceManager');
 const CustomizationManager = require('./customizationManager');
 const Database = require('./database');
+const databaseInstance = new Database();
 
 // Initialize APIs and modules
 const redditApi = new RedditApi();
@@ -17,11 +18,11 @@ const instagramApi = new InstagramApi();
 const contentSelector = new ContentSelector(redditApi);
 const engagementEnhancer = new EngagementEnhancer();
 const hashtagGenerator = new HashtagGenerator();
-const analyticsTracker = new AnalyticsTracker(new Database());
+const analyticsTracker = new AnalyticsTracker(databaseInstance);
 const communityInteractor = new CommunityInteractor(instagramApi);
 const crossPromoter = new CrossPromoter({ instagram: instagramApi });
 const complianceManager = new ComplianceManager(redditApi, instagramApi);
-const customizationManager = new CustomizationManager(new Database());
+const customizationManager = new CustomizationManager(databaseInstance);
 
 async function runAutogram() {
     // This is the main function that will run the autogram script
