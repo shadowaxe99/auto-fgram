@@ -19,7 +19,6 @@ class Database {
     // Placeholder methods for database operations
     storeUserPreferences(userId, preferences) {
         const collection = this.db.collection('userPreferences');
-        // Use upsert option to update the user's preferences if the userId exists, or insert a new document if not
         collection.updateOne({ userId: userId }, { $set: preferences }, { upsert: true }, (err, result) => {
             if (err) {
                 throw new Error('Failed to store user preferences in the database');
@@ -35,7 +34,7 @@ class Database {
                 if (err) {
                     reject(new Error('Failed to retrieve user preferences from the database'));
                 }
-                resolve(doc);
+                resolve(doc || {});
             });
         });
     }
